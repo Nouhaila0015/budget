@@ -4,3 +4,6 @@ back/data/
 *.log
 .DS_Store
 budget.pid
+# Copies de conflit iCloud (Bureau synchronisé)
+* 2.*
+* 2
