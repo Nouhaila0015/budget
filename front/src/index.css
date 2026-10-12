@@ -309,3 +309,35 @@ button {
   font-size: 11px;
   margin: 10px 0 0;
 }
+
+/* Récap */
+.recap-grid {
+  width: 66%;
+}
+
+.c-recap-label {
+  width: 50%;
+}
+
+.recap-grid .c-amount {
+  width: 25%;
+}
+
+.net td {
+  background: var(--navy);
+  color: #fff;
+  font-weight: bold;
+}
+
+.net td.ok {
+  color: #8fe0a0;
+}
+
+.net td.ko {
+  color: #ff9a8f;
+}
+
+.net-ratio td {
+  background: var(--total);
+  font-weight: bold;
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { formatPercent, parseAmount } from './money'
-import { status, total, usage } from './budget'
+import { recap, status, total, usage } from './budget'
 
 describe('parseAmount', () => {
   it('accepte virgule, point, espaces et symbole euro', () => {
@@ -35,5 +35,20 @@ describe('calculs', () => {
     expect(status('ressources', { budget: 236000, actual: 239000 })).toBe('ok')
     expect(status('ressources', { budget: 30000, actual: 0 })).toBe('ko')
     expect(status('fixes', { budget: 0, actual: 0 })).toBeNull()
+  })
+})
+
+describe('recap', () => {
+  it('calcule le solde net et la part des ressources utilisée', () => {
+    const l = (budget: number, actual: number) => ({ id: String(budget), label: '', budget, actual, notes: '' })
+    const r = recap({
+      ressources: [l(266000, 269127)],
+      fixes: [l(91400, 90449)],
+      variables: [l(65000, 35080)],
+      epargne: [l(25000, 25000)],
+    })
+    expect(r.net).toEqual({ budget: 84600, actual: 118598 })
+    expect(formatPercent(r.spentRatio.actual)).toBe(formatPercent(0.5593))
+    expect(recap({ ressources: [], fixes: [], variables: [], epargne: [] }).spentRatio.budget).toBeNull()
   })
 })
