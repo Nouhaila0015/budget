@@ -65,6 +65,6 @@ cd front && npm test   # calculs, formats, calculatrice
 
 ## Données
 
-Le budget est enregistré dans `back/data/budget.json`. Ce fichier est **ignoré par Git** : il reste uniquement sur ta machine et n'est jamais poussé sur GitHub. Pour le sauvegarder, copie-le ailleurs.
+Le budget est enregistré dans `back/data/budget.json`. Ce fichier est **ignoré par Git**
 
 L'app n'a pas d'authentification : elle écoute seulement sur `127.0.0.1` et ne doit pas être exposée sur Internet.
