@@ -1,0 +1,6 @@
+node_modules/
+dist/
+back/data/
+*.log
+.DS_Store
+budget.pid
