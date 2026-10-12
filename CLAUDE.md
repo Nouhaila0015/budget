@@ -63,3 +63,8 @@ Authentification, multi-utilisateurs, export, graphiques, catégories prédéfin
 
 ## Déploiement local
 - Port fixe : **4100** (http://localhost:4100).
+- Le BFF sert le front buildé : un seul processus Node.
+- Construire : `./build.sh` · Lancer : `./start.sh` · Arrêter : `./stop.sh`.
+- Données : `back/data/budget.json` (non versionné). Logs : `budget.log`.
+- Développement : `cd back && npm run dev` puis `cd front && npm run dev` (Vite redirige `/api` vers le port 4100).
+- Tests : `cd back && npm test` et `cd front && npm test`.
