@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { status, total, usage, type Amounts, type Line, type SectionKey } from '../lib/budget'
 import { formatEuro, formatPercent } from '../lib/money'
 import { AmountInput } from './AmountInput'
+import { Calculator } from './Calculator'
 
 interface Props {
   sectionKey: SectionKey
@@ -25,6 +26,7 @@ function Indicators({ section, amounts }: { section: SectionKey; amounts: Amount
 
 export function Section({ sectionKey, title, icon, totalLabel, lines, onChange }: Props) {
   const [addedId, setAddedId] = useState<string | null>(null)
+  const [calculatorId, setCalculatorId] = useState<string | null>(null)
 
   const update = (id: string, patch: Partial<Line>) =>
     onChange(lines.map((line) => (line.id === id ? { ...line, ...patch } : line)))
@@ -71,38 +73,63 @@ export function Section({ sectionKey, title, icon, totalLabel, lines, onChange }
         </thead>
         <tbody>
           {lines.map((line) => (
-            <tr key={line.id}>
-              <td>
-                <input
-                  className="cell-input"
-                  aria-label="Libellé"
-                  placeholder="Libellé…"
-                  value={line.label}
-                  autoFocus={line.id === addedId}
-                  onChange={(e) => update(line.id, { label: e.target.value })}
-                />
-              </td>
-              <td>
-                <AmountInput label={`Budgété ${line.label}`} value={line.budget} onChange={(budget) => update(line.id, { budget })} />
-              </td>
-              <td>
-                <AmountInput label={`Réel ${line.label}`} value={line.actual} onChange={(actual) => update(line.id, { actual })} />
-              </td>
-              <Indicators section={sectionKey} amounts={line} />
-              <td>
-                <input
-                  className="cell-input notes"
-                  aria-label="Notes"
-                  value={line.notes}
-                  onChange={(e) => update(line.id, { notes: e.target.value })}
-                />
-              </td>
-              <td className="actions">
-                <button type="button" className="icon-btn" title="Supprimer la ligne" onClick={() => remove(line)}>
-                  🗑
-                </button>
-              </td>
-            </tr>
+            <Fragment key={line.id}>
+              <tr>
+                <td>
+                  <input
+                    className="cell-input"
+                    aria-label="Libellé"
+                    placeholder="Libellé…"
+                    value={line.label}
+                    autoFocus={line.id === addedId}
+                    onChange={(e) => update(line.id, { label: e.target.value })}
+                  />
+                </td>
+                <td>
+                  <AmountInput label={`Budgété ${line.label}`} value={line.budget} onChange={(budget) => update(line.id, { budget })} />
+                </td>
+                <td>
+                  <AmountInput label={`Réel ${line.label}`} value={line.actual} onChange={(actual) => update(line.id, { actual })} />
+                </td>
+                <Indicators section={sectionKey} amounts={line} />
+                <td>
+                  <input
+                    className="cell-input notes"
+                    aria-label="Notes"
+                    value={line.notes}
+                    onChange={(e) => update(line.id, { notes: e.target.value })}
+                  />
+                </td>
+                <td className="actions">
+                  <button
+                    type="button"
+                    className={`icon-btn ${calculatorId === line.id ? 'active' : ''}`}
+                    title="Ajouter un montant au réel"
+                    onClick={() => setCalculatorId(calculatorId === line.id ? null : line.id)}
+                  >
+                    🧮
+                  </button>
+                  <button type="button" className="icon-btn" title="Supprimer la ligne" onClick={() => remove(line)}>
+                    🗑
+                  </button>
+                </td>
+              </tr>
+              {calculatorId === line.id && (
+                <tr className="calculator-row">
+                  <td colSpan={7}>
+                    <Calculator
+                      label={line.label}
+                      actual={line.actual}
+                      onValidate={(actual) => {
+                        update(line.id, { actual })
+                        setCalculatorId(null)
+                      }}
+                      onCancel={() => setCalculatorId(null)}
+                    />
+                  </td>
+                </tr>
+              )}
+            </Fragment>
           ))}
         </tbody>
         <tfoot>
