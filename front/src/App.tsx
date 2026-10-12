@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { fetchMonth, saveMonth } from './api'
+import { Recap } from './components/Recap'
 import { Section } from './components/Section'
 import { SECTIONS, type Line, type Month, type SectionKey } from './lib/budget'
 import { currentMonthKey, monthLabel, shiftMonth } from './lib/months'
@@ -93,18 +94,22 @@ export default function App() {
       {loadError && <p className="message error">Impossible de charger ce mois. Le serveur est-il lancé ?</p>}
       {!month && !loadError && <p className="message">Chargement…</p>}
 
-      {month &&
-        SECTIONS.map((section) => (
-          <Section
-            key={`${monthKey}-${section.key}`}
-            sectionKey={section.key}
-            title={section.title}
-            icon={section.icon}
-            totalLabel={section.totalLabel}
-            lines={month[section.key]}
-            onChange={(lines) => updateSection(section.key, lines)}
-          />
-        ))}
+      {month && (
+        <>
+          {SECTIONS.map((section) => (
+            <Section
+              key={`${monthKey}-${section.key}`}
+              sectionKey={section.key}
+              title={section.title}
+              icon={section.icon}
+              totalLabel={section.totalLabel}
+              lines={month[section.key]}
+              onChange={(lines) => updateSection(section.key, lines)}
+            />
+          ))}
+          <Recap month={month} />
+        </>
+      )}
     </main>
   )
 }

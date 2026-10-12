@@ -44,3 +44,25 @@ export function status(section: SectionKey, { budget, actual }: Amounts): Status
   if (budget === 0 && actual === 0) return null
   return section === 'ressources' ? (actual >= budget ? 'ok' : 'ko') : actual <= budget ? 'ok' : 'ko'
 }
+
+export interface Recap {
+  totals: Record<SectionKey, Amounts>
+  /** Ressources − (charges fixes + charges variables + épargne). */
+  net: Amounts
+  /** Part des ressources dépensée ou épargnée (null si aucune ressource). */
+  spentRatio: { budget: number | null; actual: number | null }
+}
+
+export function recap(month: Month): Recap {
+  const totals = Object.fromEntries(SECTIONS.map(({ key }) => [key, total(month[key])])) as Record<SectionKey, Amounts>
+  const outgoing = (field: keyof Amounts) => totals.fixes[field] + totals.variables[field] + totals.epargne[field]
+  const income = totals.ressources
+  return {
+    totals,
+    net: { budget: income.budget - outgoing('budget'), actual: income.actual - outgoing('actual') },
+    spentRatio: {
+      budget: income.budget === 0 ? null : outgoing('budget') / income.budget,
+      actual: income.actual === 0 ? null : outgoing('actual') / income.actual,
+    },
+  }
+}
